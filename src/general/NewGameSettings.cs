@@ -267,6 +267,9 @@ public class NewGameSettings : ControlWithInput
         gameSeed.Text = seed;
         gameSeedAdvanced.Text = seed;
         SetSeed(seed);
+
+        // Make sure non-lawk options are disabled if lawk is set to true on start-up
+        UpdateLifeOriginOptions(lawkButton.Pressed);
     }
 
     [RunOnKeyDown("ui_cancel", Priority = Constants.SUBMENU_CANCEL_PRIORITY)]
@@ -459,7 +462,8 @@ public class NewGameSettings : ControlWithInput
 
         var transitions = new List<ITransition>();
 
-        if (Settings.Instance.PlayMicrobeIntroVideo && LaunchOptions.VideosEnabled)
+        if (Settings.Instance.PlayMicrobeIntroVideo && LaunchOptions.VideosEnabled &&
+            SafeModeStartupHandler.AreVideosAllowed())
         {
             transitions.Add(TransitionManager.Instance.CreateScreenFade(ScreenFade.FadeType.FadeOut, 1.5f));
             transitions.Add(TransitionManager.Instance.CreateCutscene(
